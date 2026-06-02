@@ -1,0 +1,125 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  runtime  = "nodejs"
+  engineType = "wasm"
+}
+
+model User {
+  id           String        @id
+  email        String        @unique
+  createdAt    DateTime      @default(now())
+  participants Participant[]
+  pools        Pool[]        @relation("PoolAdmin")
+}
+
+model Pool {
+  id             String         @id @default(uuid())
+  name           String
+  invitationCode String         @unique
+  adminId        String
+  admin          User           @relation("PoolAdmin", fields: [adminId], references: [id])
+  createdAt      DateTime       @default(now())
+  participants   Participant[]
+  scoringRules   ScoringRules?
+  bonusQuestions BonusQuestion[]
+}
+
+model ScoringRules {
+  id            String @id @default(uuid())
+  poolId        String @unique
+  pool          Pool   @relation(fields: [poolId], references: [id])
+  exactPoints   Int    @default(5)
+  partialPoints Int    @default(3)
+  oneTeamPoints Int    @default(1)
+}
+
+model Participant {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  poolId           String
+  pool             Pool              @relation(fields: [poolId], references: [id])
+  displayName      String
+  totalPoints      Int               @default(0)
+  exactCount       Int               @default(0)
+  partialCount     Int               @default(0)
+  joinedAt         DateTime          @default(now())
+  predictions      Prediction[]
+  bonusPredictions BonusPrediction[]
+
+  @@unique([userId, poolId])
+  @@unique([poolId, displayName])
+}
+
+model Match {
+  id          String       @id @default(uuid())
+  homeTeam    String
+  awayTeam    String
+  group       String?
+  phase       MatchPhase
+  startTime   DateTime
+  result      MatchResult?
+  predictions Prediction[]
+}
+
+enum MatchPhase {
+  GROUPS
+  R16
+  QF
+  SF
+  FINAL
+}
+
+model MatchResult {
+  id            String   @id @default(uuid())
+  matchId       String   @unique
+  match         Match    @relation(fields: [matchId], references: [id])
+  homeGoals     Int
+  awayGoals     Int
+  penaltyWinner String?
+  recordedAt    DateTime @default(now())
+}
+
+model Prediction {
+  id            String      @id @default(uuid())
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id])
+  matchId       String
+  match         Match       @relation(fields: [matchId], references: [id])
+  homeGoals     Int
+  awayGoals     Int
+  penaltyWinner String?
+  pointsEarned  Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([participantId, matchId])
+}
+
+model BonusQuestion {
+  id            String            @id @default(uuid())
+  poolId        String
+  pool          Pool              @relation(fields: [poolId], references: [id])
+  question      String
+  correctAnswer String?
+  points        Int               @default(10)
+  deadline      DateTime
+  predictions   BonusPrediction[]
+}
+
+model BonusPrediction {
+  id            String        @id @default(uuid())
+  participantId String
+  participant   Participant   @relation(fields: [participantId], references: [id])
+  questionId    String
+  question      BonusQuestion @relation(fields: [questionId], references: [id])
+  answer        String
+  pointsEarned  Int?
+  createdAt     DateTime      @default(now())
+
+  @@unique([participantId, questionId])
+}
