@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 
+const ADMIN_EMAIL = 'backich99@gmail.com';
+
 interface Pool {
   id: string;
   name: string;
@@ -16,6 +18,8 @@ export function DashboardPage() {
   const [pools, setPools] = useState<Pool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     loadPools();
@@ -51,15 +55,6 @@ export function DashboardPage() {
       </header>
 
       <main className="dashboard-content">
-        <section className="dashboard-actions">
-          <Link to="/pools/create" className="btn btn-primary">
-            Crear Quiniela
-          </Link>
-          <Link to="/pools/join" className="btn btn-secondary">
-            Unirse a Quiniela
-          </Link>
-        </section>
-
         <section className="pools-list">
           <h2>Mis Quinielas</h2>
 
@@ -69,8 +64,7 @@ export function DashboardPage() {
 
           {!loading && pools.length === 0 && (
             <p className="empty-state">
-              No estás en ninguna quiniela aún. ¡Crea una o únete con un código de
-              invitación!
+              No estás en ninguna quiniela aún. Pide el código de invitación al administrador.
             </p>
           )}
 
@@ -92,8 +86,8 @@ export function DashboardPage() {
                 <Link to={`/pools/${pool.id}/bonus`} className="btn btn-sm">
                   Bonus
                 </Link>
-                {pool.role === 'admin' && (
-                  <Link to={`/admin`} className="btn btn-sm">
+                {isAdmin && (
+                  <Link to="/admin" className="btn btn-sm">
                     Admin
                   </Link>
                 )}

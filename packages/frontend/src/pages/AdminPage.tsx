@@ -87,11 +87,11 @@ export function AdminPage() {
   const loadPoolData = async () => {
     try {
       setError(null);
-      const [matchesData, bonusData] = await Promise.all([
-        api<Match[]>('/matches'),
-        api<BonusQuestion[]>(`/pools/${selectedPool}/bonus-questions`).catch(() => [] as BonusQuestion[]),
+      const [matchesResponse, bonusData] = await Promise.all([
+        api<{ matches: Match[]; pagination: unknown }>('/matches?limit=100'),
+        api<BonusQuestion[]>(`/pools/${selectedPool}/bonus-predictions/questions`).catch(() => [] as BonusQuestion[]),
       ]);
-      setMatches(matchesData);
+      setMatches(matchesResponse.matches ?? []);
       setBonusQuestions(bonusData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar datos');
