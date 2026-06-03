@@ -19,7 +19,7 @@ export function JoinPoolPage() {
       const data = await api<{ poolId: string }>('/pools/join', {
         method: 'POST',
         body: {
-          invitationCode: invitationCode.trim().toUpperCase(),
+          invitationCode: invitationCode.trim(),
           displayName: displayName.trim(),
         },
       });
@@ -53,7 +53,7 @@ export function JoinPoolPage() {
               placeholder="Ej: ABC12DEF"
               required
               maxLength={8}
-              style={{ textTransform: 'uppercase', letterSpacing: '2px' }}
+              style={{ letterSpacing: '2px' }}
             />
           </div>
 
