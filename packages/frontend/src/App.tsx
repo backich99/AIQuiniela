@@ -47,6 +47,14 @@ function App() {
             }
           />
           <Route
+            path="/pools/join/:code"
+            element={
+              <ProtectedRoute>
+                <JoinPoolPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/pools/:poolId"
             element={
               <ProtectedRoute>

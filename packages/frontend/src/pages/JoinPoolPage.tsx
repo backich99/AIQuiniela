@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../lib/api';
 
 export function JoinPoolPage() {
   const navigate = useNavigate();
-  const [invitationCode, setInvitationCode] = useState('');
+  const { code } = useParams<{ code?: string }>();
+  const [invitationCode, setInvitationCode] = useState(code || '');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

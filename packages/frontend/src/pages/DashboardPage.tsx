@@ -63,9 +63,12 @@ export function DashboardPage() {
           {error && <div className="error-message">{error}</div>}
 
           {!loading && pools.length === 0 && (
-            <p className="empty-state">
-              No estás en ninguna quiniela aún. Pide el código de invitación al administrador.
-            </p>
+            <div className="empty-state">
+              <p>No estás en ninguna quiniela aún.</p>
+              <Link to="/pools/join/ZF7IXjMp" className="btn btn-primary">
+                Unirme a La Garnacha Mundialista
+              </Link>
+            </div>
           )}
 
           {pools.map((pool) => (
