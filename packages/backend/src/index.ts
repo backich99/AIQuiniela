@@ -8,7 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-app.use(cors({ origin: FRONTEND_URL }));
+app.use(cors({
+  origin: FRONTEND_URL === '*' ? true : FRONTEND_URL.split(',').map(u => u.trim()),
+  credentials: true,
+}));
 app.use(express.json());
 
 // Health check
