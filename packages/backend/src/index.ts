@@ -6,12 +6,17 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || '*';
 
-app.use(cors({
-  origin: FRONTEND_URL === '*' ? true : FRONTEND_URL.split(',').map(u => u.trim()),
-  credentials: true,
-}));
+// CORS: allow all origins in development/when FRONTEND_URL is '*'
+if (FRONTEND_URL === '*') {
+  app.use(cors());
+} else {
+  app.use(cors({
+    origin: FRONTEND_URL.split(',').map(u => u.trim()),
+    credentials: true,
+  }));
+}
 app.use(express.json());
 
 // Health check
