@@ -6,17 +6,8 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL || '*';
-
-// CORS: allow all origins in development/when FRONTEND_URL is '*'
-if (FRONTEND_URL === '*') {
-  app.use(cors());
-} else {
-  app.use(cors({
-    origin: FRONTEND_URL.split(',').map(u => u.trim()),
-    credentials: true,
-  }));
-}
+// CORS: allow all origins
+app.use(cors());
 app.use(express.json());
 
 // Health check
