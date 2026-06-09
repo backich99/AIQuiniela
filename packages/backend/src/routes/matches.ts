@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10) || 50));
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit as string, 10) || 50));
     const skip = (pageNum - 1) * limitNum;
 
     const [matches, total] = await Promise.all([

@@ -65,7 +65,7 @@ export function MatchesPage() {
       if (filterGroup) params.set('group', filterGroup);
       if (filterTeam) params.set('team', filterTeam);
 
-      const queryStr = params.toString() ? `?${params.toString()}` : '';
+      const queryStr = params.toString() ? `?${params.toString()}&limit=200` : '?limit=200';
 
       const [matchesResponse, predictionsData] = await Promise.all([
         api<{ matches: Match[]; pagination: unknown }>(`/matches${queryStr}`),

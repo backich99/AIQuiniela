@@ -88,7 +88,7 @@ export function AdminPage() {
     try {
       setError(null);
       const [matchesResponse, bonusData] = await Promise.all([
-        api<{ matches: Match[]; pagination: unknown }>('/matches?limit=100'),
+        api<{ matches: Match[]; pagination: unknown }>('/matches?limit=200'),
         api<BonusQuestion[]>(`/pools/${selectedPool}/bonus-predictions/questions`).catch(() => [] as BonusQuestion[]),
       ]);
       setMatches(matchesResponse.matches ?? []);
