@@ -94,6 +94,31 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 /**
+ * GET /api/pools/:poolId/bonus-predictions/questions
+ * List all bonus questions for a pool (admin only).
+ */
+router.get('/questions', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req as AuthenticatedRequest;
+    const poolId = req.params.poolId as string;
+
+    const pool = await prisma.pool.findUnique({ where: { id: poolId } });
+    if (!pool || pool.adminId !== userId) {
+      throw new AppError('NOT_ADMIN', 'Solo el administrador puede realizar esta acción', 403);
+    }
+
+    const questions = await prisma.bonusQuestion.findMany({
+      where: { poolId },
+      orderBy: { deadline: 'asc' },
+    });
+
+    res.json(questions);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * POST /api/pools/:poolId/bonus-questions
  * Create a bonus question (admin only).
  * Body: { question: string, points?: number, deadline: string }
@@ -162,30 +187,34 @@ router.patch('/questions/:questionId/resolve', async (req: Request, res: Respons
       data: { correctAnswer: correctAnswer.trim() },
     });
 
-    // Calculate points for all predictions on this question
+    // Calculate points for all predictions on this question, using delta to be idempotent
     const predictions = await prisma.bonusPrediction.findMany({
       where: { questionId },
     });
 
-    for (const pred of predictions) {
-      const earned =
-        pred.answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
-          ? question.points
-          : 0;
+    await prisma.$transaction(async (tx) => {
+      for (const pred of predictions) {
+        const earned =
+          pred.answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+            ? question.points
+            : 0;
 
-      await prisma.bonusPrediction.update({
-        where: { id: pred.id },
-        data: { pointsEarned: earned },
-      });
+        const previousEarned = pred.pointsEarned ?? 0;
+        const delta = earned - previousEarned;
 
-      // Update participant totals
-      if (earned > 0) {
-        await prisma.participant.update({
-          where: { id: pred.participantId },
-          data: { totalPoints: { increment: earned } },
+        await tx.bonusPrediction.update({
+          where: { id: pred.id },
+          data: { pointsEarned: earned },
         });
+
+        if (delta !== 0) {
+          await tx.participant.update({
+            where: { id: pred.participantId },
+            data: { totalPoints: { increment: delta } },
+          });
+        }
       }
-    }
+    });
 
     res.json({ question, resolvedPredictions: predictions.length });
   } catch (err) {

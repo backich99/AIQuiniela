@@ -121,7 +121,7 @@ export function MatchesPage() {
     }
 
     const match = matches.find((m) => m.id === matchId);
-    if (match && isKnockout(match.phase) && homeGoals === awayGoals && !form.penaltyWinner) {
+    if (match && isKnockout(match.phase) && homeGoals === awayGoals && !form.penaltyWinner.trim()) {
       setFormErrors({ ...formErrors, [matchId]: 'En eliminatoria con empate, selecciona ganador en penales' });
       return;
     }
@@ -287,7 +287,7 @@ export function MatchesPage() {
                         </div>
 
                         {/* Penalty winner selector for knockout draws */}
-                        {isKnockout(match.phase) && form.homeGoals && form.awayGoals && form.homeGoals === form.awayGoals && (
+                        {isKnockout(match.phase) && form.homeGoals !== '' && form.awayGoals !== '' && parseInt(form.homeGoals, 10) === parseInt(form.awayGoals, 10) && (
                           <div className="penalty-selector">
                             <label>Ganador en penales:</label>
                             <select

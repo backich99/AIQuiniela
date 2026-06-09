@@ -153,7 +153,7 @@ export function AdminPage() {
     try {
       await api(`/pools/${selectedPool}/scoring`, {
         method: 'PATCH',
-        body: { exact, partial, oneTeam },
+        body: { exactPoints: exact, partialPoints: partial, oneTeamPoints: oneTeam },
       });
       setSuccessMsg('Reglas de puntuación actualizadas');
     } catch (err) {
@@ -172,7 +172,7 @@ export function AdminPage() {
     setSuccessMsg(null);
 
     try {
-      await api(`/pools/${selectedPool}/bonus-questions`, {
+      await api(`/pools/${selectedPool}/bonus-predictions/questions`, {
         method: 'POST',
         body: {
           question: newQuestion.trim(),
@@ -201,8 +201,8 @@ export function AdminPage() {
     setSuccessMsg(null);
 
     try {
-      await api(`/pools/${selectedPool}/bonus-questions/${selectedQuestion}/resolve`, {
-        method: 'POST',
+      await api(`/pools/${selectedPool}/bonus-predictions/questions/${selectedQuestion}/resolve`, {
+        method: 'PATCH',
         body: { correctAnswer: correctAnswer.trim() },
       });
       setSuccessMsg('Pregunta bonus resuelta');
