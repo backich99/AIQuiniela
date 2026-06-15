@@ -3,7 +3,7 @@ services:
   - type: web
     name: aiquiniela-api
     runtime: node
-    buildCommand: npm install --include=dev && cd packages/backend && npx prisma generate && npm run build
+    buildCommand: npm install --include=dev && cd packages/backend && npx prisma migrate deploy && npx prisma generate && npm run build
     startCommand: cd packages/backend && npm start
     envVars:
       - key: DATABASE_URL
@@ -21,6 +21,21 @@ services:
       - key: NODE_ENV
         value: production
     healthCheckPath: /health
+
+  # ESPN Sync Cron (every 5 min)
+  - type: cron
+    name: aiquiniela-espn-sync
+    runtime: node
+    schedule: "*/5 * * * *"
+    buildCommand: npm install --include=dev && cd packages/backend && npx prisma generate
+    startCommand: cd packages/backend && npx tsx scripts/cronSync.ts
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
 
   # Frontend SPA
   - type: web

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
+import { getFlag } from '../lib/flags';
 
 type MatchPhase = 'GROUPS' | 'R16' | 'QF' | 'SF' | 'FINAL';
 
@@ -234,7 +235,7 @@ export function MatchesPage() {
                 return (
                   <div key={match.id} className="match-card">
                     <div className="match-info">
-                      <span className="match-teams">{match.homeTeam} vs {match.awayTeam}</span>
+                      <span className="match-teams">{getFlag(match.homeTeam)} {match.homeTeam} vs {match.awayTeam} {getFlag(match.awayTeam)}</span>
                       <span className="match-date">
                         {new Date(match.startTime).toLocaleString('es-MX', {
                           dateStyle: 'medium',

@@ -4,6 +4,7 @@ import { requireAuth, AuthenticatedRequest } from '../middleware/auth.js';
 import { syncUser } from '../middleware/syncUser.js';
 import { AppError } from '../errors/AppError.js';
 import { calculatePoints } from '../domain/scoring.js';
+import { syncResults } from '../services/espnSync.js';
 
 const router = Router();
 
@@ -58,6 +59,28 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         totalPages: Math.ceil(total / limitNum),
       },
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * POST /api/matches/sync
+ * Sync results from ESPN World Cup API (admin only).
+ */
+router.post('/sync', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req as AuthenticatedRequest;
+    const adminPools = await prisma.pool.findMany({
+      where: { adminId: userId },
+      select: { id: true },
+    });
+    if (adminPools.length === 0) {
+      throw new AppError('NOT_ADMIN', 'Solo el administrador puede sincronizar resultados', 403);
+    }
+
+    const result = await syncResults();
+    res.json(result);
   } catch (err) {
     next(err);
   }

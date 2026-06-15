@@ -57,6 +57,7 @@ model Participant {
 
 model Match {
   id          String       @id @default(uuid())
+  espnEventId String?      @unique
   homeTeam    String
   awayTeam    String
   group       String?
@@ -68,6 +69,7 @@ model Match {
 
 enum MatchPhase {
   GROUPS
+  R32
   R16
   QF
   SF
