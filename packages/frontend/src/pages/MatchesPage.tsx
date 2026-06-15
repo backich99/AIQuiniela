@@ -7,6 +7,7 @@ type MatchPhase = 'GROUPS' | 'R16' | 'QF' | 'SF' | 'FINAL';
 
 interface Match {
   id: string;
+  espnEventId?: string | null;
   homeTeam: string;
   awayTeam: string;
   group: string | null;
@@ -16,6 +17,14 @@ interface Match {
     homeGoals: number;
     awayGoals: number;
   } | null;
+}
+
+interface LiveScore {
+  espnEventId: string;
+  homeScore: number;
+  awayScore: number;
+  clock: string;
+  status: 'in' | 'half' | 'post' | 'pre';
 }
 
 interface Prediction {
@@ -38,6 +47,7 @@ export function MatchesPage() {
   const { poolId } = useParams<{ poolId: string }>();
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Record<string, Prediction>>({});
+  const [liveScores, setLiveScores] = useState<Record<string, LiveScore>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +65,22 @@ export function MatchesPage() {
   useEffect(() => {
     loadData();
   }, [poolId, filterPhase, filterGroup, filterTeam]);
+
+  // Poll live scores every 5 minutes
+  useEffect(() => {
+    const fetchLive = () => {
+      api<LiveScore[]>('/matches/live')
+        .then((scores) => {
+          const map: Record<string, LiveScore> = {};
+          for (const s of scores) map[s.espnEventId] = s;
+          setLiveScores(map);
+        })
+        .catch(() => {});
+    };
+    fetchLive();
+    const interval = setInterval(fetchLive, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const loadData = async () => {
     try {
@@ -315,20 +341,34 @@ export function MatchesPage() {
                     )}
 
                     {/* If started and no result yet */}
-                    {started && !match.result && pred && (
-                      <div className="match-result">
-                        <span className="prediction-result">
-                          Tu pronóstico: {pred.homeGoals} - {pred.awayGoals}
-                        </span>
-                        <span className="match-status">Partido en juego / Pendiente resultado</span>
-                      </div>
-                    )}
-
-                    {started && !match.result && !pred && (
-                      <div className="match-result">
-                        <span className="match-status">Sin pronóstico - Partido ya iniciado</span>
-                      </div>
-                    )}
+                    {started && !match.result && (() => {
+                      const live = match.espnEventId ? liveScores[match.espnEventId] : null;
+                      return (
+                        <div className="match-result">
+                          {live && live.status === 'in' && (
+                            <span className="result-score live-score">
+                              🔴 EN VIVO: {live.homeScore} - {live.awayScore} ({live.clock})
+                            </span>
+                          )}
+                          {live && live.status === 'half' && (
+                            <span className="result-score live-score">
+                              ⏸️ Medio tiempo: {live.homeScore} - {live.awayScore}
+                            </span>
+                          )}
+                          {(!live || live.status === 'pre') && (
+                            <span className="match-status">Partido en juego / Pendiente resultado</span>
+                          )}
+                          {pred && (
+                            <span className="prediction-result">
+                              Tu pronóstico: {pred.homeGoals} - {pred.awayGoals}
+                            </span>
+                          )}
+                          {!pred && (
+                            <span className="match-status">Sin pronóstico</span>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}

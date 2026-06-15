@@ -5,6 +5,7 @@ import { syncUser } from '../middleware/syncUser.js';
 import { AppError } from '../errors/AppError.js';
 import { calculatePoints } from '../domain/scoring.js';
 import { syncResults } from '../services/espnSync.js';
+import { getLiveScores } from '../services/liveScores.js';
 
 const router = Router();
 
@@ -59,6 +60,19 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         totalPages: Math.ceil(total / limitNum),
       },
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/matches/live
+ * Returns live scores for matches currently in progress (5-min cache).
+ */
+router.get('/live', async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const scores = await getLiveScores();
+    res.json(scores);
   } catch (err) {
     next(err);
   }
