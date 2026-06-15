@@ -36,7 +36,14 @@ export async function syncResults(): Promise<{ synced: string[] }> {
   const synced: string[] = [];
 
   if (pending.length > 0) {
-    const dateSet = new Set(pending.map((m) => formatDate(m.startTime)));
+    const dateSet = new Set<string>();
+    for (const m of pending) {
+      dateSet.add(formatDate(m.startTime));
+      // ESPN groups by ET date, which can be a day before UTC
+      const prev = new Date(m.startTime);
+      prev.setDate(prev.getDate() - 1);
+      dateSet.add(formatDate(prev));
+    }
 
     for (const date of dateSet) {
       const res = await fetch(`${ESPN_SCOREBOARD_URL}?dates=${date}`);
