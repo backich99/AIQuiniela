@@ -11,6 +11,7 @@ import { MatchesPage } from './pages/MatchesPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
 import { BonusPage } from './pages/BonusPage';
 import { AdminPage } from './pages/AdminPage';
+import { AllPredictionsPage } from './pages/AllPredictionsPage';
 
 function App() {
   return (
@@ -83,6 +84,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BonusPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pools/:poolId/pronosticos"
+            element={
+              <ProtectedRoute>
+                <AllPredictionsPage />
               </ProtectedRoute>
             }
           />

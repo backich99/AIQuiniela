@@ -4,6 +4,7 @@ import matchesRouter from './matches.js';
 import predictionsRouter from './predictions.js';
 import leaderboardRouter from './leaderboard.js';
 import bonusRouter from './bonus.js';
+import allPredictionsRouter from './allPredictions.js';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.use('/pools', poolsRouter);
 router.use('/pools/:poolId/predictions', predictionsRouter);
 router.use('/pools/:poolId/leaderboard', leaderboardRouter);
 router.use('/pools/:poolId/bonus-predictions', bonusRouter);
+router.use('/pools/:poolId/all-predictions', allPredictionsRouter);
 router.use('/matches', matchesRouter);
 router.use('/notifications', Router()); // Placeholder — implemented in task 11
 

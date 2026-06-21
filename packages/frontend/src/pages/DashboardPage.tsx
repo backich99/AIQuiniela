@@ -89,6 +89,9 @@ export function DashboardPage() {
                 <Link to={`/pools/${pool.id}/bonus`} className="btn btn-sm">
                   Bonus
                 </Link>
+                <Link to={`/pools/${pool.id}/pronosticos`} className="btn btn-sm">
+                  Pronósticos
+                </Link>
                 {isAdmin && (
                   <Link to="/admin" className="btn btn-sm">
                     Admin
