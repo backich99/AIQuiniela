@@ -109,7 +109,9 @@ model BonusQuestion {
   question      String
   correctAnswer String?
   points        Int               @default(10)
+  opensAt       DateTime?
   deadline      DateTime
+  options       String[]
   predictions   BonusPrediction[]
 }
 

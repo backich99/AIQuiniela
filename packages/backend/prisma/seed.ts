@@ -120,22 +120,22 @@ async function main() {
     { homeTeam: "Jordania", awayTeam: "Argentina", group: "J", phase: MatchPhase.GROUPS, startTime: et("2026-06-27", "22:00") },
 
     // ===== TREINTAIDOSAVOS DE FINAL (Round of 32) =====
-    { homeTeam: "2º Grupo A", awayTeam: "2º Grupo B", group: null, phase: MatchPhase.R16, startTime: et("2026-06-28", "15:00") },
-    { homeTeam: "1º Grupo E", awayTeam: "3º Grupo A/B/C/D/F", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "13:00") },
-    { homeTeam: "1º Grupo F", awayTeam: "2º Grupo C", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "17:00") },
-    { homeTeam: "1º Grupo C", awayTeam: "2º Grupo F", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "21:00") },
-    { homeTeam: "1º Grupo I", awayTeam: "3º Grupo C/D/F/G/H", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "13:00") },
-    { homeTeam: "2º Grupo E", awayTeam: "2º Grupo I", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "17:00") },
-    { homeTeam: "1º Grupo A", awayTeam: "3º Grupo C/E/F/H/I", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "21:00") },
-    { homeTeam: "1º Grupo L", awayTeam: "3º Grupo E/H/I/J/K", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "12:00") },
-    { homeTeam: "1º Grupo D", awayTeam: "3º Grupo B/E/F/I/J", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "16:00") },
-    { homeTeam: "1º Grupo G", awayTeam: "3º Grupo A/E/H/I/J", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "20:00") },
-    { homeTeam: "2º Grupo K", awayTeam: "2º Grupo L", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "13:00") },
-    { homeTeam: "1º Grupo H", awayTeam: "2º Grupo J", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "17:00") },
-    { homeTeam: "1º Grupo B", awayTeam: "3º Grupo E/F/G/I/J", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "21:00") },
-    { homeTeam: "1º Grupo J", awayTeam: "2º Grupo H", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "13:00") },
-    { homeTeam: "1º Grupo K", awayTeam: "3º Grupo D/E/I/J/L", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "17:00") },
-    { homeTeam: "2º Grupo D", awayTeam: "2º Grupo G", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "21:00") },
+    { homeTeam: "Sudáfrica", awayTeam: "Canadá", group: null, phase: MatchPhase.R16, startTime: et("2026-06-28", "15:00") },
+    { homeTeam: "Alemania", awayTeam: "Paraguay", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "13:00") },
+    { homeTeam: "Brasil", awayTeam: "Japón", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "17:00") },
+    { homeTeam: "Países Bajos", awayTeam: "Marruecos", group: null, phase: MatchPhase.R16, startTime: et("2026-06-29", "21:00") },
+    { homeTeam: "Francia", awayTeam: "Suecia", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "13:00") },
+    { homeTeam: "Costa de Marfil", awayTeam: "Noruega", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "17:00") },
+    { homeTeam: "México", awayTeam: "Ecuador", group: null, phase: MatchPhase.R16, startTime: et("2026-06-30", "21:00") },
+    { homeTeam: "Inglaterra", awayTeam: "RD Congo", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "12:00") },
+    { homeTeam: "Estados Unidos", awayTeam: "Bosnia y Herzegovina", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "16:00") },
+    { homeTeam: "Bélgica", awayTeam: "Senegal", group: null, phase: MatchPhase.R16, startTime: et("2026-07-01", "20:00") },
+    { homeTeam: "Portugal", awayTeam: "Croacia", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "13:00") },
+    { homeTeam: "España", awayTeam: "Austria", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "17:00") },
+    { homeTeam: "Suiza", awayTeam: "Argelia", group: null, phase: MatchPhase.R16, startTime: et("2026-07-02", "21:00") },
+    { homeTeam: "Argentina", awayTeam: "Cabo Verde", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "13:00") },
+    { homeTeam: "Colombia", awayTeam: "Ghana", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "17:00") },
+    { homeTeam: "Australia", awayTeam: "Egipto", group: null, phase: MatchPhase.R16, startTime: et("2026-07-03", "21:00") },
 
     // ===== OCTAVOS DE FINAL (Round of 16) =====
     { homeTeam: "Ganador P74", awayTeam: "Ganador P77", group: null, phase: MatchPhase.QF, startTime: et("2026-07-04", "13:00") },
@@ -168,7 +168,82 @@ async function main() {
     await prisma.match.create({ data: match });
   }
 
-  console.log(`✅ Seeded ${matches.length} matches (should be 104).`);
+  // Seed bonus question: Top Scorer (Golden Boot)
+  // This question is only open on Sunday June 28, 2026 (CST = UTC-6)
+  // Opens at 00:00:01 CST = 06:00:01 UTC, Closes at 23:59:59 CST = 05:59:59 UTC next day
+  await prisma.bonusQuestion.deleteMany({});
+
+  // We need at least one pool to attach the question to — skip if no pools exist
+  const pools = await prisma.pool.findMany();
+  for (const pool of pools) {
+    await prisma.bonusQuestion.create({
+      data: {
+        poolId: pool.id,
+        question: "¿Quién será el campeón de goleo de este mundial?",
+        points: 10,
+        opensAt: new Date("2026-06-29T06:00:01Z"), // Sunday 00:00:01 CST
+        deadline: new Date("2026-06-30T05:59:59Z"), // Sunday 23:59:59 CST
+        options: [
+          "Lionel Messi",
+          "Kylian Mbappé",
+          "Erling Haaland",
+          "Ousmane Dembélé",
+          "Vinícius Júnior",
+          "Deniz Undav",
+          "Jonathan David",
+          "Matheus Cunha",
+          "Ismael Saibari",
+          "Brian Brobbey",
+        ],
+      },
+    });
+
+    await prisma.bonusQuestion.create({
+      data: {
+        poolId: pool.id,
+        question: "¿Quién ganará el mundial?",
+        points: 10,
+        opensAt: new Date("2026-06-29T06:00:01Z"), // Sunday 00:00:01 CST
+        deadline: new Date("2026-06-30T05:59:59Z"), // Sunday 23:59:59 CST
+        options: [
+          "Sudáfrica",
+          "Canadá",
+          "Alemania",
+          "Paraguay",
+          "Brasil",
+          "Japón",
+          "Países Bajos",
+          "Marruecos",
+          "Francia",
+          "Suecia",
+          "Costa de Marfil",
+          "Noruega",
+          "México",
+          "Ecuador",
+          "Inglaterra",
+          "RD Congo",
+          "Estados Unidos",
+          "Bosnia y Herzegovina",
+          "Bélgica",
+          "Senegal",
+          "Portugal",
+          "Croacia",
+          "España",
+          "Austria",
+          "Suiza",
+          "Argelia",
+          "Argentina",
+          "Cabo Verde",
+          "Colombia",
+          "Ghana",
+          "Australia",
+          "Egipto",
+        ],
+      },
+    });
+  }
+
+  console.log(`✅ Seeded ${matches.length} matches and bonus questions.`);
 }
 
 main()

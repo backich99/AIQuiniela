@@ -42,6 +42,22 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
+    // Check opensAt
+    if (question.opensAt && new Date() < question.opensAt) {
+      throw new AppError(
+        'BONUS_NOT_OPEN',
+        'Esta pregunta aún no está abierta',
+        409
+      );
+    }
+
+    // Validate answer against options if defined
+    if (question.options && question.options.length > 0) {
+      if (!question.options.includes(answer.trim())) {
+        throw new AppError('INVALID_OPTION', 'Debes seleccionar una de las opciones válidas', 400);
+      }
+    }
+
     // Check if already answered
     const existing = await prisma.bonusPrediction.findUnique({
       where: { participantId_questionId: { participantId: participant.id, questionId } },
@@ -67,7 +83,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * GET /api/pools/:poolId/bonus-predictions/me
- * Get my bonus predictions.
+ * Get all bonus questions with my predictions.
  */
 router.get('/me', async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -82,12 +98,41 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction) => {
       throw new AppError('NOT_PARTICIPANT', 'No eres participante de esta quiniela', 403);
     }
 
-    const predictions = await prisma.bonusPrediction.findMany({
-      where: { participantId: participant.id },
-      include: { question: true },
+    const questions = await prisma.bonusQuestion.findMany({
+      where: { poolId },
+      orderBy: { deadline: 'asc' },
     });
 
-    res.json(predictions);
+    const predictions = await prisma.bonusPrediction.findMany({
+      where: { participantId: participant.id },
+    });
+
+    const predMap = new Map(predictions.map((p) => [p.questionId, p]));
+
+    const result = questions.map((q) => {
+      const pred = predMap.get(q.id);
+      let status: string = 'unanswered';
+      if (pred) {
+        if (q.correctAnswer === null) status = 'pending';
+        else if (pred.pointsEarned && pred.pointsEarned > 0) status = 'correct';
+        else status = 'incorrect';
+      }
+      return {
+        id: pred?.id ?? null,
+        questionId: q.id,
+        question: q.question,
+        answer: pred?.answer ?? null,
+        deadline: q.deadline.toISOString(),
+        opensAt: q.opensAt?.toISOString() ?? null,
+        options: q.options ?? [],
+        points: q.points,
+        correctAnswer: q.correctAnswer,
+        pointsEarned: pred?.pointsEarned ?? null,
+        status,
+      };
+    });
+
+    res.json(result);
   } catch (err) {
     next(err);
   }
@@ -136,7 +181,7 @@ router.post('/questions', async (req: Request, res: Response, next: NextFunction
       throw new AppError('NOT_ADMIN', 'Solo el administrador puede realizar esta acción', 403);
     }
 
-    const { question, points = 10, deadline } = req.body;
+    const { question, points = 10, deadline, opensAt, options } = req.body;
 
     if (!question || typeof question !== 'string') {
       throw new AppError('INVALID_QUESTION', 'La pregunta es requerida');
@@ -150,7 +195,9 @@ router.post('/questions', async (req: Request, res: Response, next: NextFunction
         poolId,
         question: question.trim(),
         points,
+        opensAt: opensAt ? new Date(opensAt) : null,
         deadline: new Date(deadline),
+        options: Array.isArray(options) ? options : [],
       },
     });
 

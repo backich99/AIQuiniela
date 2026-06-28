@@ -3,11 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
 
 interface BonusPrediction {
-  id: string;
+  id: string | null;
   questionId: string;
   question: string;
   answer: string | null;
   deadline: string;
+  opensAt: string | null;
+  options: string[];
   points: number;
   correctAnswer: string | null;
   pointsEarned: number | null;
@@ -48,6 +50,8 @@ export function BonusPage() {
   };
 
   const isDeadlinePassed = (deadline: string) => new Date(deadline) <= new Date();
+  const isNotYetOpen = (opensAt: string | null) => opensAt ? new Date(opensAt) > new Date() : false;
+  const isOpen = (bp: BonusPrediction) => !isDeadlinePassed(bp.deadline) && !isNotYetOpen(bp.opensAt);
 
   const handleSubmit = async (questionId: string) => {
     const answer = formState[questionId]?.trim();
@@ -100,6 +104,8 @@ export function BonusPage() {
         <div className="bonus-list">
           {bonusPredictions.map((bp) => {
             const deadlinePassed = isDeadlinePassed(bp.deadline);
+            const notYetOpen = isNotYetOpen(bp.opensAt);
+            const open = isOpen(bp);
             const questionError = formErrors[bp.questionId];
 
             return (
@@ -108,11 +114,14 @@ export function BonusPage() {
                   <h3>{bp.question}</h3>
                   {getStatusBadge(bp)}
                 </div>
+                {bp.opensAt && (
+                  <p className="bonus-deadline">
+                    Abre: {new Date(bp.opensAt).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })}
+                    {notYetOpen && <span className="deadline-passed"> (aún no disponible)</span>}
+                  </p>
+                )}
                 <p className="bonus-deadline">
-                  Fecha límite: {new Date(bp.deadline).toLocaleString('es-MX', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                  })}
+                  Cierra: {new Date(bp.deadline).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })}
                   {deadlinePassed && <span className="deadline-passed"> (expirada)</span>}
                 </p>
                 <p className="bonus-points">Puntos: {bp.points}</p>
@@ -121,24 +130,39 @@ export function BonusPage() {
                   <p className="bonus-answer">Tu respuesta: <strong>{bp.answer}</strong></p>
                 )}
 
-                {!deadlinePassed && (
+                {open && (
                   <div className="bonus-form">
-                    <input
-                      type="text"
-                      placeholder="Tu respuesta..."
-                      value={formState[bp.questionId] ?? ''}
-                      onChange={(e) => setFormState({ ...formState, [bp.questionId]: e.target.value })}
-                      disabled={deadlinePassed}
-                    />
+                    {bp.options.length > 0 ? (
+                      <select
+                        value={formState[bp.questionId] ?? ''}
+                        onChange={(e) => setFormState({ ...formState, [bp.questionId]: e.target.value })}
+                      >
+                        <option value="">Seleccionar...</option>
+                        {bp.options.map((opt) => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        placeholder="Tu respuesta..."
+                        value={formState[bp.questionId] ?? ''}
+                        onChange={(e) => setFormState({ ...formState, [bp.questionId]: e.target.value })}
+                      />
+                    )}
                     {questionError && <span className="inline-error">{questionError}</span>}
                     <button
                       className="btn btn-primary btn-sm"
                       onClick={() => handleSubmit(bp.questionId)}
-                      disabled={submitting === bp.questionId || deadlinePassed}
+                      disabled={submitting === bp.questionId}
                     >
                       {submitting === bp.questionId ? 'Guardando...' : bp.answer ? 'Actualizar' : 'Enviar'}
                     </button>
                   </div>
+                )}
+
+                {notYetOpen && !bp.answer && (
+                  <p className="match-status">Esta pregunta aún no está abierta.</p>
                 )}
               </div>
             );
