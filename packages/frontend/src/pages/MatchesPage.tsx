@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { getFlag } from '../lib/flags';
 
-type MatchPhase = 'GROUPS' | 'R16' | 'QF' | 'SF' | 'FINAL';
+type MatchPhase = 'GROUPS' | 'R32' | 'R16' | 'QF' | 'SF' | 'FINAL';
 
 interface Match {
   id: string;
@@ -37,6 +37,7 @@ interface Prediction {
 
 const PHASES: { value: MatchPhase; label: string }[] = [
   { value: 'GROUPS', label: 'Grupos' },
+  { value: 'R32', label: 'Dieciseisavos' },
   { value: 'R16', label: 'Octavos' },
   { value: 'QF', label: 'Cuartos' },
   { value: 'SF', label: 'Semifinal' },
@@ -52,7 +53,7 @@ export function MatchesPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [filterPhase, setFilterPhase] = useState<string>('R16');
+  const [filterPhase, setFilterPhase] = useState<string>('R32');
   const [filterGroup, setFilterGroup] = useState<string>('');
   const [filterTeam, setFilterTeam] = useState<string>('');
 
