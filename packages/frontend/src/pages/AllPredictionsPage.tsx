@@ -6,6 +6,7 @@ interface MatchInfo {
   id: string;
   homeTeam: string;
   awayTeam: string;
+  phase: string;
   startTime: string;
   result: { homeGoals: number; awayGoals: number } | null;
 }
@@ -32,6 +33,7 @@ export function AllPredictionsPage() {
   const [data, setData] = useState<AllPredictionsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filterPhase, setFilterPhase] = useState<string>('R32');
 
   useEffect(() => {
     loadData();
@@ -54,7 +56,10 @@ export function AllPredictionsPage() {
   if (error) return <div className="page-container"><div className="error-message">{error}</div></div>;
   if (!data) return null;
 
-  const { matches, participants, predictions } = data;
+  const { matches: allMatches, participants, predictions } = data;
+
+  // Filter matches by phase
+  const matches = filterPhase ? allMatches.filter(m => m.phase === filterPhase) : allMatches;
 
   // Helper: get color class for each part of the prediction
   function getCellContent(participantId: string, match: MatchInfo) {
@@ -105,6 +110,21 @@ export function AllPredictionsPage() {
         <h1>📊 Pronósticos de Todos</h1>
         <Link to="/dashboard" className="btn btn-secondary btn-sm">← Volver</Link>
       </header>
+
+      <div className="filters-bar" style={{ marginBottom: '1rem' }}>
+        <div className="form-group filter-item">
+          <label>Fase</label>
+          <select value={filterPhase} onChange={(e) => setFilterPhase(e.target.value)}>
+            <option value="">Todas</option>
+            <option value="GROUPS">Grupos</option>
+            <option value="R32">Dieciseisavos</option>
+            <option value="R16">Octavos</option>
+            <option value="QF">Cuartos</option>
+            <option value="SF">Semifinal</option>
+            <option value="FINAL">Final</option>
+          </select>
+        </div>
+      </div>
 
       <p className="page-subtitle">
         Solo se muestran partidos que ya iniciaron. 

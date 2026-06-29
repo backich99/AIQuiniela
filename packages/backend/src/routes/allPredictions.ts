@@ -66,6 +66,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         id: m.id,
         homeTeam: m.homeTeam,
         awayTeam: m.awayTeam,
+        phase: m.phase,
         startTime: m.startTime,
         result: m.result ? { homeGoals: m.result.homeGoals, awayGoals: m.result.awayGoals } : null,
       })),
