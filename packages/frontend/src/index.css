@@ -776,3 +776,175 @@ form .btn {
   background: #eff6ff;
   border-left: 3px solid #3b82f6;
 }
+
+
+/* === NFL Styles === */
+
+/* NFL Week Navigation */
+.nfl-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.nfl-week-pills {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+}
+
+.nfl-week-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #d1d5db;
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.nfl-week-pill:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+.nfl-week-pill--selected {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.nfl-week-pill--current:not(.nfl-week-pill--selected) {
+  border-color: #059669;
+  color: #059669;
+  font-weight: 700;
+}
+
+/* NFL Pick Selector */
+.nfl-pick-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nfl-pick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+}
+
+.nfl-pick-btn:hover:not(:disabled) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.nfl-pick-btn--selected {
+  border-color: #2563eb;
+  background: #dbeafe;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.nfl-pick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nfl-pick-emoji {
+  font-size: 1.2rem;
+}
+
+.nfl-pick-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+/* NFL Match Card */
+.nfl-matches-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.nfl-match-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.nfl-match-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.nfl-match-teams {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.nfl-match-time {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.nfl-match-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.nfl-match-pick {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nfl-saving {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.nfl-prediction-result {
+  font-size: 0.9rem;
+}
+
+.nfl-pred-correct {
+  color: #059669;
+}
+
+.nfl-pred-incorrect {
+  color: #dc2626;
+}
+
+/* NFL Leaderboard controls */
+.nfl-leaderboard-controls {
+  margin-bottom: 0.75rem;
+}

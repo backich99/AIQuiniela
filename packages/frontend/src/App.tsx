@@ -12,6 +12,9 @@ import { LeaderboardPage } from './pages/LeaderboardPage';
 import { BonusPage } from './pages/BonusPage';
 import { AdminPage } from './pages/AdminPage';
 import { AllPredictionsPage } from './pages/AllPredictionsPage';
+import { NflMatchesPage } from './pages/NflMatchesPage';
+import { NflLeaderboardPage } from './pages/NflLeaderboardPage';
+import { NflAdminPage } from './pages/NflAdminPage';
 
 function App() {
   return (
@@ -100,6 +103,32 @@ function App() {
             element={
               <AdminRoute>
                 <AdminPage />
+              </AdminRoute>
+            }
+          />
+
+          {/* NFL routes */}
+          <Route
+            path="/nfl/pools/:poolId/matches"
+            element={
+              <ProtectedRoute>
+                <NflMatchesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nfl/pools/:poolId/leaderboard"
+            element={
+              <ProtectedRoute>
+                <NflLeaderboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nfl/admin/:poolId"
+            element={
+              <AdminRoute>
+                <NflAdminPage />
               </AdminRoute>
             }
           />

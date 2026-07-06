@@ -12,10 +12,18 @@ interface Pool {
   role: 'admin' | 'participant';
 }
 
+interface NflPool {
+  id: string;
+  name: string;
+  invitationCode: string;
+  role: 'admin' | 'participant';
+}
+
 export function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [pools, setPools] = useState<Pool[]>([]);
+  const [nflPools, setNflPools] = useState<NflPool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,8 +36,12 @@ export function DashboardPage() {
   const loadPools = async () => {
     try {
       setLoading(true);
-      const data = await api<Pool[]>('/pools');
-      setPools(data);
+      const [wcData, nflData] = await Promise.all([
+        api<Pool[]>('/pools'),
+        api<NflPool[]>('/nfl/pools').catch(() => [] as NflPool[]),
+      ]);
+      setPools(wcData);
+      setNflPools(nflData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar las quinielas');
     } finally {
@@ -94,6 +106,39 @@ export function DashboardPage() {
                 </Link>
                 {isAdmin && (
                   <Link to="/admin" className="btn btn-sm">
+                    Admin
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/* NFL Pools Section */}
+        <section className="pools-list" style={{ marginTop: '2rem' }}>
+          <h2>🏈 Quinielas NFL</h2>
+
+          {!loading && nflPools.length === 0 && (
+            <p className="empty-state">No estás en ninguna quiniela NFL aún.</p>
+          )}
+
+          {nflPools.map((pool) => (
+            <div key={pool.id} className="pool-card">
+              <div className="pool-info">
+                <h3>{pool.name}</h3>
+                <span className="pool-role">
+                  {pool.role === 'admin' ? '👑 Administrador' : '🏈 Participante'}
+                </span>
+              </div>
+              <div className="pool-actions">
+                <Link to={`/nfl/pools/${pool.id}/matches`} className="btn btn-sm">
+                  Partidos
+                </Link>
+                <Link to={`/nfl/pools/${pool.id}/leaderboard`} className="btn btn-sm">
+                  Tabla
+                </Link>
+                {isAdmin && (
+                  <Link to={`/nfl/admin/${pool.id}`} className="btn btn-sm">
                     Admin
                   </Link>
                 )}
