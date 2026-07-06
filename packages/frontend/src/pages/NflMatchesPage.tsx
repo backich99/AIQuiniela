@@ -25,17 +25,19 @@ export function NflMatchesPage() {
       setError(null);
 
       const data = await api<{
-        matches: NflMatch[];
-        predictions: NflPrediction[];
-        currentWeek: number;
+        week: number;
+        matches: Array<NflMatch & { myPrediction?: { id: string; pick: string; pointsEarned: number | null } | null }>;
       }>(`/nfl/pools/${poolId}/matches?week=${selectedWeek}`);
 
-      setMatches(data.matches ?? []);
-      setCurrentWeek(data.currentWeek ?? 1);
+      const matchList = data.matches ?? [];
+      setMatches(matchList);
+      setCurrentWeek(data.week ?? selectedWeek);
 
       const predMap: Record<string, NflPrediction> = {};
-      for (const p of data.predictions ?? []) {
-        predMap[p.matchId] = p;
+      for (const m of matchList) {
+        if (m.myPrediction) {
+          predMap[m.id] = { matchId: m.id, pick: m.myPrediction.pick, pointsEarned: m.myPrediction.pointsEarned };
+        }
       }
       setPredictions(predMap);
     } catch (err) {

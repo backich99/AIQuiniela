@@ -6,9 +6,8 @@ export interface NflMatch {
   awayTeam: string;
   week: number;
   startTime: string;
-  homeScore: number | null;
-  awayScore: number | null;
-  status: 'SCHEDULED' | 'IN_PROGRESS' | 'FINAL';
+  result?: { homeScore: number; awayScore: number } | null;
+  myPrediction?: { id: string; pick: string; pointsEarned: number | null } | null;
 }
 
 export interface NflPrediction {
@@ -25,13 +24,13 @@ interface NflMatchCardProps {
 }
 
 export function NflMatchCard({ match, prediction, onPickChange, saving }: NflMatchCardProps) {
-  const isStarted = new Date(match.startTime) <= new Date() || match.status !== 'SCHEDULED';
-  const isFinished = match.status === 'FINAL';
+  const isStarted = new Date(match.startTime) <= new Date();
+  const isFinished = match.result !== undefined && match.result !== null;
 
   const getResultLabel = () => {
-    if (match.homeScore === null || match.awayScore === null) return null;
-    if (match.homeScore > match.awayScore) return 'LOCAL';
-    if (match.awayScore > match.homeScore) return 'VISITANTE';
+    if (!match.result) return null;
+    if (match.result.homeScore > match.result.awayScore) return 'LOCAL';
+    if (match.result.awayScore > match.result.homeScore) return 'VISITANTE';
     return 'EMPATE';
   };
 
@@ -55,10 +54,10 @@ export function NflMatchCard({ match, prediction, onPickChange, saving }: NflMat
       </div>
 
       {/* Show result for finished games */}
-      {isFinished && match.homeScore !== null && match.awayScore !== null && (
+      {isFinished && match.result && (
         <div className="nfl-match-result">
           <span className="result-score">
-            Resultado: {match.homeScore} - {match.awayScore}
+            Resultado: {match.result.homeScore} - {match.result.awayScore}
           </span>
           {prediction && (
             <span className={`nfl-prediction-result ${prediction.pick === result ? 'nfl-pred-correct' : 'nfl-pred-incorrect'}`}>

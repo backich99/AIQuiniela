@@ -47,11 +47,11 @@ export function NflAdminPage() {
 
       const [poolData, matchesData] = await Promise.all([
         api<NflPoolInfo>(`/nfl/pools/${poolId}`),
-        api<NflMatchAdmin[]>(`/nfl/pools/${poolId}/matches/all`),
+        api<{ week: number; matches: NflMatchAdmin[] }>(`/nfl/pools/${poolId}/matches?week=1`),
       ]);
 
       setPool(poolData);
-      setMatches(matchesData ?? []);
+      setMatches(matchesData.matches ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar datos');
     } finally {
@@ -76,9 +76,9 @@ export function NflAdminPage() {
     setSuccessMsg(null);
 
     try {
-      await api(`/nfl/pools/${poolId}/matches/${selectedMatch}/result`, {
+      await api(`/nfl/admin/results`, {
         method: 'POST',
-        body: { homeScore: home, awayScore: away },
+        body: { matchId: selectedMatch, homeScore: home, awayScore: away },
       });
       setSuccessMsg('Resultado registrado correctamente');
       setSelectedMatch('');
@@ -98,7 +98,7 @@ export function NflAdminPage() {
     setSuccessMsg(null);
 
     try {
-      await api(`/nfl/pools/${poolId}/sync`, { method: 'POST' });
+      await api(`/nfl/admin/sync`, { method: 'POST' });
       setSuccessMsg('Sincronización con ESPN completada');
       await loadData();
     } catch (err) {
