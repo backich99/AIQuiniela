@@ -53,7 +53,7 @@ export function MatchesPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [filterPhase, setFilterPhase] = useState<string>('QF');
+  const [filterPhase, setFilterPhase] = useState<string>('SF');
   const [filterGroup, setFilterGroup] = useState<string>('');
   const [filterTeam, setFilterTeam] = useState<string>('');
 
