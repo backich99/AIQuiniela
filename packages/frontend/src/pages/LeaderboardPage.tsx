@@ -10,6 +10,8 @@ interface LeaderboardEntry {
   totalPoints: number;
   exactCount: number;
   partialCount: number;
+  bonusPoints: number;
+  bonusDetails: Array<{ question: string; answer: string; points: number }>;
 }
 
 export function LeaderboardPage() {
@@ -60,6 +62,7 @@ export function LeaderboardPage() {
                 <th>Puntos</th>
                 <th>Exactos</th>
                 <th>Parciales</th>
+                <th>Bonus</th>
               </tr>
             </thead>
             <tbody>
@@ -73,6 +76,9 @@ export function LeaderboardPage() {
                   <td className="points-cell"><strong>{entry.totalPoints}</strong></td>
                   <td>{entry.exactCount}</td>
                   <td>{entry.partialCount}</td>
+                  <td className="bonus-cell" title={entry.bonusDetails?.map(b => `${b.question}: ${b.answer} (${b.points}pts)`).join('\n')}>
+                    {entry.bonusPoints ?? 0}
+                  </td>
                 </tr>
               ))}
             </tbody>

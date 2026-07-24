@@ -32,14 +32,32 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         totalPoints: true,
         exactCount: true,
         partialCount: true,
+        bonusPredictions: {
+          where: { pointsEarned: { not: null } },
+          select: { pointsEarned: true, question: { select: { question: true } }, answer: true },
+        },
       },
     });
 
-    // Assign positions
-    const leaderboard = participants.map((p, index) => ({
-      position: index + 1,
-      ...p,
-    }));
+    // Assign positions and calculate bonus points
+    const leaderboard = participants.map((p, index) => {
+      const bonusPoints = p.bonusPredictions.reduce((sum, bp) => sum + (bp.pointsEarned ?? 0), 0);
+      const bonusDetails = p.bonusPredictions.map(bp => ({
+        question: bp.question.question,
+        answer: bp.answer,
+        points: bp.pointsEarned ?? 0,
+      }));
+      return {
+        position: index + 1,
+        id: p.id,
+        displayName: p.displayName,
+        totalPoints: p.totalPoints,
+        exactCount: p.exactCount,
+        partialCount: p.partialCount,
+        bonusPoints,
+        bonusDetails,
+      };
+    });
 
     res.json(leaderboard);
   } catch (err) {
