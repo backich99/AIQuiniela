@@ -9,13 +9,15 @@ generator client {
 }
 
 model User {
-  id              String           @id
-  email           String           @unique
-  createdAt       DateTime         @default(now())
-  participants    Participant[]
-  pools           Pool[]           @relation("PoolAdmin")
-  nflPools        NflPool[]        @relation("NflPoolAdmin")
-  nflParticipants NflParticipant[]
+  id                 String              @id
+  email              String              @unique
+  createdAt          DateTime            @default(now())
+  participants       Participant[]
+  pools              Pool[]              @relation("PoolAdmin")
+  nflPools           NflPool[]           @relation("NflPoolAdmin")
+  nflParticipants    NflParticipant[]
+  ligaMxPools        LigaMxPool[]        @relation("LigaMxPoolAdmin")
+  ligaMxParticipants LigaMxParticipant[]
 }
 
 model Pool {
@@ -143,6 +145,7 @@ model NflPool {
   adminId        String
   admin          User             @relation("NflPoolAdmin", fields: [adminId], references: [id])
   season         Int              @default(2026)
+  league         String           @default("NFL")
   createdAt      DateTime         @default(now())
   participants   NflParticipant[]
 }
@@ -168,6 +171,7 @@ model NflMatch {
   homeTeam    String
   awayTeam    String
   week        Int
+  league      String          @default("NFL")
   startTime   DateTime
   result      NflResult?
   predictions NflPrediction[]
@@ -192,6 +196,67 @@ model NflPrediction {
   pointsEarned  Int?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+
+  @@unique([participantId, matchId])
+}
+
+
+model LigaMxPool {
+  id             String              @id @default(uuid())
+  name           String
+  invitationCode String              @unique
+  adminId        String
+  admin          User                @relation("LigaMxPoolAdmin", fields: [adminId], references: [id])
+  season         String              @default("AP2026")
+  createdAt      DateTime            @default(now())
+  participants   LigaMxParticipant[]
+}
+
+model LigaMxParticipant {
+  id          String             @id @default(uuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  poolId      String
+  pool        LigaMxPool         @relation(fields: [poolId], references: [id])
+  displayName String
+  totalPoints Int                @default(0)
+  joinedAt    DateTime           @default(now())
+  predictions LigaMxPrediction[]
+
+  @@unique([userId, poolId])
+  @@unique([poolId, displayName])
+}
+
+model LigaMxMatch {
+  id          String             @id @default(uuid())
+  espnEventId String?            @unique
+  homeTeam    String
+  awayTeam    String
+  jornada     Int
+  startTime   DateTime
+  result      LigaMxResult?
+  predictions LigaMxPrediction[]
+}
+
+model LigaMxResult {
+  id         String      @id @default(uuid())
+  matchId    String      @unique
+  match      LigaMxMatch @relation(fields: [matchId], references: [id])
+  homeGoals  Int
+  awayGoals  Int
+  recordedAt DateTime    @default(now())
+}
+
+model LigaMxPrediction {
+  id            String            @id @default(uuid())
+  participantId String
+  participant   LigaMxParticipant @relation(fields: [participantId], references: [id])
+  matchId       String
+  match         LigaMxMatch       @relation(fields: [matchId], references: [id])
+  pick          NflPick
+  pointsEarned  Int?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   @@unique([participantId, matchId])
 }

@@ -4,7 +4,7 @@ import cors from 'cors';
 import router from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { syncResults } from './services/espnSync.js';
-import { syncNflResults } from './services/nflEspnSync.js';
+import { syncNflResults, syncLigaMxResults } from './services/nflEspnSync.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +37,13 @@ setInterval(() => {
     .catch((err) => console.error('NFL ESPN sync error:', err.message));
 }, 30 * 60 * 1000);
 
+// Auto-sync Liga MX ESPN results every 15 minutes
+setInterval(() => {
+  syncLigaMxResults()
+    .then((r) => { if (r.synced.length > 0) console.log('⚽ Liga MX Synced:', r.synced); })
+    .catch((err) => console.error('Liga MX ESPN sync error:', err.message));
+}, 15 * 60 * 1000);
+
 app.listen(PORT, () => {
   console.log(`🚀 Backend server running on port ${PORT}`);
   // Run sync once on startup
@@ -46,6 +53,9 @@ app.listen(PORT, () => {
   syncNflResults()
     .then((r) => { if (r.synced.length > 0) console.log('🏈 NFL Synced on startup:', r.synced); })
     .catch((err) => console.error('NFL ESPN sync error:', err.message));
+  syncLigaMxResults()
+    .then((r) => { if (r.synced.length > 0) console.log('⚽ Liga MX Synced on startup:', r.synced); })
+    .catch((err) => console.error('Liga MX ESPN sync error:', err.message));
 });
 
 export default app;

@@ -18,13 +18,17 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     const week = weekParam ? parseInt(weekParam, 10) : getCurrentNflWeek();
 
+    // Get the pool to know which league
+    const pool = await prisma.nflPool.findUnique({ where: { id: poolId } });
+    const league = pool?.league || 'NFL';
+
     // Get user's participant for this pool to include their predictions
     const participant = await prisma.nflParticipant.findUnique({
       where: { userId_poolId: { userId, poolId } },
     });
 
     const matches = await prisma.nflMatch.findMany({
-      where: { week },
+      where: { week, league },
       include: {
         result: true,
         predictions: participant

@@ -121,6 +121,7 @@ export async function recalculateNflPoints(matchId: string): Promise<void> {
       pick: pred.pick,
       homeScore,
       awayScore,
+      league: match.league,
     });
 
     await prisma.nflPrediction.update({
@@ -144,4 +145,84 @@ export async function recalculateNflPoints(matchId: string): Promise<void> {
       data: { totalPoints },
     });
   }
+}
+
+
+const ESPN_LIGA_MX_URL =
+  'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard';
+
+/**
+ * Fetches Liga MX results from ESPN and auto-registers results for
+ * matches that have an espnEventId, league='LIGA_MX', and are finished.
+ */
+export async function syncLigaMxResults(): Promise<{ synced: string[] }> {
+  const pending = await prisma.nflMatch.findMany({
+    where: {
+      league: 'LIGA_MX',
+      espnEventId: { not: null },
+      startTime: { lte: new Date() },
+      result: null,
+    },
+    select: { startTime: true },
+  });
+
+  const synced: string[] = [];
+
+  if (pending.length === 0) return { synced };
+
+  const dateSet = new Set<string>();
+  for (const m of pending) {
+    dateSet.add(formatDate(m.startTime));
+    const prev = new Date(m.startTime);
+    prev.setDate(prev.getDate() - 1);
+    dateSet.add(formatDate(prev));
+  }
+
+  for (const date of dateSet) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10_000);
+
+      const res = await fetch(`${ESPN_LIGA_MX_URL}?dates=${date}`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!res.ok) continue;
+
+      const data = (await res.json()) as { events: ESPNEvent[] };
+      const finished = data.events.filter(
+        (e) => e.competitions[0].status.type.state === 'post'
+      );
+
+      for (const event of finished) {
+        const match = await prisma.nflMatch.findUnique({
+          where: { espnEventId: event.id },
+          include: { result: true },
+        });
+
+        if (!match || match.result) continue;
+
+        const comp = event.competitions[0];
+        const home = comp.competitors.find((c) => c.homeAway === 'home')!;
+        const away = comp.competitors.find((c) => c.homeAway === 'away')!;
+        const homeScore = parseInt(home.score, 10);
+        const awayScore = parseInt(away.score, 10);
+
+        await prisma.nflResult.create({
+          data: { matchId: match.id, homeScore, awayScore },
+        });
+
+        await recalculateNflPoints(match.id);
+        synced.push(
+          `${home.team.displayName} ${homeScore}-${awayScore} ${away.team.displayName}`
+        );
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`Liga MX ESPN sync error for date ${date}:`, message);
+    }
+  }
+
+  return { synced };
 }
