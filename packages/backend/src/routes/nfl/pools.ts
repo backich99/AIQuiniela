@@ -24,6 +24,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       name: p.pool.name,
       invitationCode: p.pool.invitationCode,
       season: p.pool.season,
+      league: (p.pool as any).league || 'NFL',
       role: p.pool.adminId === userId ? 'admin' : 'participant',
     }));
 

@@ -16,6 +16,7 @@ interface NflPool {
   id: string;
   name: string;
   invitationCode: string;
+  league: string;
   role: 'admin' | 'participant';
 }
 
@@ -54,10 +55,14 @@ export function DashboardPage() {
     navigate('/login');
   };
 
+  // Separate NFL pools by league
+  const ligaMxPools = nflPools.filter(p => p.league === 'LIGA_MX');
+  const nflOnlyPools = nflPools.filter(p => p.league === 'NFL');
+
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
-        <h1>🏆 AIQuiniela - Mundial 2026</h1>
+        <h1>🏆 AIQuiniela</h1>
         <div className="header-actions">
           <span className="user-email">{user?.email}</span>
           <button onClick={handleLogout} className="btn btn-secondary">
@@ -67,85 +72,104 @@ export function DashboardPage() {
       </header>
 
       <main className="dashboard-content">
-        <section className="pools-list">
-          <h2>Mis Quinielas</h2>
+        {loading && <p>Cargando quinielas...</p>}
+        {error && <div className="error-message">{error}</div>}
 
-          {loading && <p>Cargando quinielas...</p>}
-
-          {error && <div className="error-message">{error}</div>}
-
-          {!loading && pools.length === 0 && (
-            <div className="empty-state">
-              <p>No estás en ninguna quiniela aún.</p>
-              <Link to="/pools/join/ZF7IXjMp" className="btn btn-primary">
-                Unirme a La Garnacha Mundialista
-              </Link>
-            </div>
-          )}
-
-          {pools.map((pool) => (
-            <div key={pool.id} className="pool-card">
-              <div className="pool-info">
-                <h3>{pool.name}</h3>
-                <span className="pool-role">
-                  {pool.role === 'admin' ? '👑 Administrador' : '⚽ Participante'}
-                </span>
-              </div>
-              <div className="pool-actions">
-                <Link to={`/pools/${pool.id}/matches`} className="btn btn-sm">
-                  Partidos
-                </Link>
-                <Link to={`/pools/${pool.id}/leaderboard`} className="btn btn-sm">
-                  Tabla
-                </Link>
-                <Link to={`/pools/${pool.id}/bonus`} className="btn btn-sm">
-                  Bonus
-                </Link>
-                <Link to={`/pools/${pool.id}/pronosticos`} className="btn btn-sm">
-                  Pronósticos
-                </Link>
-                {isAdmin && (
-                  <Link to="/admin" className="btn btn-sm">
-                    Admin
+        {/* 1. Liga MX ⚽ */}
+        {ligaMxPools.length > 0 && (
+          <section className="pools-list">
+            <h2>⚽ Liga MX</h2>
+            {ligaMxPools.map((pool) => (
+              <div key={pool.id} className="pool-card">
+                <div className="pool-info">
+                  <h3>{pool.name}</h3>
+                  <span className="pool-role">
+                    {pool.role === 'admin' ? '👑 Admin' : '⚽ Participante'}
+                  </span>
+                </div>
+                <div className="pool-actions">
+                  <Link to={`/nfl/pools/${pool.id}/matches`} className="btn btn-sm">
+                    Partidos
                   </Link>
-                )}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* NFL Pools Section */}
-        <section className="pools-list" style={{ marginTop: '2rem' }}>
-          <h2>🏈 Quinielas NFL</h2>
-
-          {!loading && nflPools.length === 0 && (
-            <p className="empty-state">No estás en ninguna quiniela NFL aún.</p>
-          )}
-
-          {nflPools.map((pool) => (
-            <div key={pool.id} className="pool-card">
-              <div className="pool-info">
-                <h3>{pool.name}</h3>
-                <span className="pool-role">
-                  {pool.role === 'admin' ? '👑 Administrador' : '🏈 Participante'}
-                </span>
-              </div>
-              <div className="pool-actions">
-                <Link to={`/nfl/pools/${pool.id}/matches`} className="btn btn-sm">
-                  Partidos
-                </Link>
-                <Link to={`/nfl/pools/${pool.id}/leaderboard`} className="btn btn-sm">
-                  Tabla
-                </Link>
-                {isAdmin && (
-                  <Link to={`/nfl/admin/${pool.id}`} className="btn btn-sm">
-                    Admin
+                  <Link to={`/nfl/pools/${pool.id}/leaderboard`} className="btn btn-sm">
+                    Tabla
                   </Link>
-                )}
+                  {isAdmin && (
+                    <Link to={`/nfl/admin/${pool.id}`} className="btn btn-sm">
+                      Admin
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </section>
+            ))}
+          </section>
+        )}
+
+        {/* 2. NFL 🏈 */}
+        {nflOnlyPools.length > 0 && (
+          <section className="pools-list" style={{ marginTop: '2rem' }}>
+            <h2>🏈 NFL</h2>
+            {nflOnlyPools.map((pool) => (
+              <div key={pool.id} className="pool-card">
+                <div className="pool-info">
+                  <h3>{pool.name}</h3>
+                  <span className="pool-role">
+                    {pool.role === 'admin' ? '👑 Admin' : '🏈 Participante'}
+                  </span>
+                </div>
+                <div className="pool-actions">
+                  <Link to={`/nfl/pools/${pool.id}/matches`} className="btn btn-sm">
+                    Partidos
+                  </Link>
+                  <Link to={`/nfl/pools/${pool.id}/leaderboard`} className="btn btn-sm">
+                    Tabla
+                  </Link>
+                  {isAdmin && (
+                    <Link to={`/nfl/admin/${pool.id}`} className="btn btn-sm">
+                      Admin
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* 3. Mundial 🏆 */}
+        {pools.length > 0 && (
+          <section className="pools-list" style={{ marginTop: '2rem' }}>
+            <h2>🏆 Mundial</h2>
+            {pools.map((pool) => (
+              <div key={pool.id} className="pool-card">
+                <div className="pool-info">
+                  <h3>{pool.name}</h3>
+                  <span className="pool-role">
+                    {pool.role === 'admin' ? '👑 Admin' : '🏆 Participante'}
+                  </span>
+                </div>
+                <div className="pool-actions">
+                  <Link to={`/pools/${pool.id}/matches`} className="btn btn-sm">
+                    Partidos
+                  </Link>
+                  <Link to={`/pools/${pool.id}/leaderboard`} className="btn btn-sm">
+                    Tabla
+                  </Link>
+                  <Link to={`/pools/${pool.id}/bonus`} className="btn btn-sm">
+                    Bonus
+                  </Link>
+                  <Link to={`/pools/${pool.id}/pronosticos`} className="btn btn-sm">
+                    Pronósticos
+                  </Link>
+                  {isAdmin && (
+                    <Link to="/admin" className="btn btn-sm">
+                      Admin
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
       </main>
     </div>
   );
