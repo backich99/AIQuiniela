@@ -8,9 +8,9 @@ interface NflPickSelectorProps {
 
 export function NflPickSelector({ pick, onPick, disabled, homeTeam, awayTeam }: NflPickSelectorProps) {
   const options = [
-    { value: 'LOCAL', emoji: '🏠', label: 'LOCAL', description: `Gana ${homeTeam}` },
-    { value: 'EMPATE', emoji: '🤝', label: 'EMPATE', description: 'Empate' },
-    { value: 'VISITANTE', emoji: '✈️', label: 'VISITANTE', description: `Gana ${awayTeam}` },
+    { value: 'HOME', emoji: '🏠', label: 'LOCAL', description: `Gana ${homeTeam}` },
+    { value: 'TIE', emoji: '🤝', label: 'EMPATE', description: 'Empate' },
+    { value: 'AWAY', emoji: '✈️', label: 'VISITANTE', description: `Gana ${awayTeam}` },
   ];
 
   return (
