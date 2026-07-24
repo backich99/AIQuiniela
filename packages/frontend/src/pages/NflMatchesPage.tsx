@@ -52,9 +52,9 @@ export function NflMatchesPage() {
     try {
       const existing = predictions[matchId];
       if (existing) {
-        await api(`/nfl/pools/${poolId}/predictions`, {
+        await api(`/nfl/pools/${poolId}/predictions/${matchId}`, {
           method: 'PUT',
-          body: { matchId, pick },
+          body: { pick },
         });
       } else {
         await api(`/nfl/pools/${poolId}/predictions`, {
