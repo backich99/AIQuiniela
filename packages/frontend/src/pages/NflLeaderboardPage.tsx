@@ -30,13 +30,9 @@ export function NflLeaderboardPage() {
       setError(null);
 
       const weekParam = selectedWeek > 0 ? `?week=${selectedWeek}` : '';
-      const data = await api<{
-        leaderboard: NflLeaderboardEntry[];
-        currentWeek: number;
-      }>(`/nfl/pools/${poolId}/leaderboard${weekParam}`);
+      const data = await api<NflLeaderboardEntry[]>(`/nfl/pools/${poolId}/leaderboard${weekParam}`);
 
-      setEntries(data.leaderboard ?? []);
-      setCurrentWeek(data.currentWeek ?? 1);
+      setEntries(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar la tabla');
     } finally {
