@@ -948,3 +948,19 @@ form .btn {
 .nfl-leaderboard-controls {
   margin-bottom: 0.75rem;
 }
+
+
+/* Team logos */
+.team-logo {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin: 0 4px;
+  border-radius: 2px;
+}
+
+.vs-text {
+  margin: 0 4px;
+  font-weight: 400;
+  color: #666;
+}

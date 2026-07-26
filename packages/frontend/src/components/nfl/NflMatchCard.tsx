@@ -1,4 +1,5 @@
 import { NflPickSelector } from './NflPickSelector';
+import { getTeamLogo } from '../../lib/ligaMxLogos';
 
 export interface NflMatch {
   id: string;
@@ -40,7 +41,17 @@ export function NflMatchCard({ match, prediction, onPickChange, saving }: NflMat
     <div className="nfl-match-card">
       <div className="nfl-match-header">
         <span className="nfl-match-teams">
-          🏈 {match.homeTeam} vs {match.awayTeam}
+          {getTeamLogo(match.homeTeam) ? (
+            <>
+              <img src={getTeamLogo(match.homeTeam)!} alt={match.homeTeam} className="team-logo" />
+              {match.homeTeam}
+              <span className="vs-text"> vs </span>
+              <img src={getTeamLogo(match.awayTeam)!} alt={match.awayTeam} className="team-logo" />
+              {match.awayTeam}
+            </>
+          ) : (
+            <>🏈 {match.homeTeam} vs {match.awayTeam}</>
+          )}
         </span>
         <span className="nfl-match-time">
           {new Date(match.startTime).toLocaleString('es-MX', {
