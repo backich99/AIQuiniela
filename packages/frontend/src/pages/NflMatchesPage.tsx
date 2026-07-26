@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { NflWeekNav } from '../components/nfl/NflWeekNav';
 import { NflMatchCard } from '../components/nfl/NflMatchCard';
 import type { NflMatch, NflPrediction } from '../components/nfl/NflMatchCard';
+import { getTeamLogo } from '../lib/ligaMxLogos';
 
 export function NflMatchesPage() {
   const { poolId } = useParams<{ poolId: string }>();
@@ -77,7 +78,7 @@ export function NflMatchesPage() {
   return (
     <div className="page-container">
       <header className="page-header">
-        <h1>🏈 Partidos NFL</h1>
+        <h1>{matches.length > 0 && getTeamLogo(matches[0].homeTeam) ? '⚽ Liga MX' : '🏈 Partidos NFL'}</h1>
         <Link to="/dashboard" className="btn btn-secondary btn-sm">← Volver</Link>
       </header>
 
